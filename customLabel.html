@@ -1,0 +1,138 @@
+<html>
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js">
+    </script>
+    <script language="javascript">
+      function drawChart() {
+        var ctx = document.getElementById('chart');
+        var myBarChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['69-57', '88-73', '83-71', '63-62'],
+            datasets: [{
+              label: 'Points',
+              data: [51, 55, 62, 48],
+              informations: [
+              {
+                text: 'Text1',
+                color: '#1dbf73'
+              },
+              { 
+                text: 'Text2',
+                color: '#ff0000'
+              },
+              {
+                text: 'Text3',
+                color: '#00ee00'
+              },
+              { 
+                text: 'Text4 text4 text4 text4 text4',
+                color: '#0000ff'
+              }],
+              backgroundColor: "rgba(0,102,255,0.8)",
+              hoverBackgroundColor: "rgba(0,102,255,0.8)",
+              hoverBorderWidth: 2,
+              hoverBorderColor: 'lightgrey'
+            },
+            {
+              label: '3pt',
+              data: [18, 33, 21, 18],
+              backgroundColor: "rgba(0,128,0,0.8)",
+              hoverBackgroundColor: "rgba(0,128,0,0.8)",
+              hoverBorderWidth: 2,
+              hoverBorderColor: 'lightgrey'
+          },
+            ]
+          },
+          options: {
+            responsive: false,
+            animation: {
+              duration: 10,
+            },
+            tooltips: {
+              mode: 'label',
+              callbacks: {
+                label: function(tooltipItem, data) {
+                  return data.datasets[tooltipItem.datasetIndex].label + ": " + tooltipItem.yLabel;
+                }
+              }
+            },
+            scales: {
+              xAxes: [{
+                stacked: true,
+                gridLines: { display: false },
+                ticks: {
+                  callback: function(value) {
+                    console.log(value);
+                    return value;
+                  },
+                },
+              }],
+              yAxes: [{
+                stacked: true,
+                ticks: {
+                  callback: function(value) {
+                    return value;
+                  },
+                }
+              }]
+            },
+            legend: {display: true},
+            hover: {
+              animationDuration: 0
+            },
+            animation: {
+                duration: 1,
+                onComplete: function () {
+                    var chartInstance = this.chart,
+                    ctx = chartInstance.ctx;
+                    ctx.font = Chart.helpers.fontString(11, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    ctx.fontSize = '14px';
+
+                    this.data.datasets.forEach(function (dataset, i) {
+                        var meta = chartInstance.controller.getDatasetMeta(i);
+                        meta.data.forEach(function (bar, index) {
+                            var data = dataset.data[index];
+                            console.log('data: ', data);
+                            ctx.fillText(data, bar._model.x, bar._model.y + 15);
+                            if (dataset.informations) {
+                              var info = dataset.informations[index];
+                              console.log('bar: ', bar);
+                              ctx.save();
+                              ctx.globalCompositeOperation='destination-over';
+                              ctx.translate(bar._model.x-bar._model.width/2 - 31, bar._model.base);
+                              ctx.rotate(Math.PI / 2);
+                              ctx.font = "30px Arial";
+                              if (info.color) {
+                                ctx.fillStyle = info.color;
+                              } else {
+                                ctx.fillStyle = '#000000';
+                              }
+                              ctx.textAlign = 'right';
+                              ctx.fillText(info.text, 0, 0);
+                              ctx.restore();
+                            }
+                            
+                        });
+                    });
+                }
+            }
+          }
+        });
+      }
+      
+    </script>
+    <style>
+      #chart {
+        /* width: 600px;
+        height: 400px; */
+      }
+    </style>
+  </head>
+  <body onload="drawChart()">
+    <canvas id="chart" width="800" height="600"></canvas>
+  </body>
+</html>
